@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace：dao接口的全类名
+ -->
+<mapper namespace="com.baizhi.mapper.AdminMapper">
+    <select id="selectByUsername" resultType="com.baizhi.entity.Admin">
+		select id,username,password from yx_admin where username=#{username}
+	</select>
+
+    <!--<insert id="insert">-->
+    <!--insert into user values (#{id},#{realname},#{username},#{password},#{sex})-->
+    <!--</insert>-->
+
+    <!--<delete id="delete">-->
+    <!--delete from user where id = #{id}-->
+    <!--</delete>-->
+
+    <!--<update id="update">-->
+    <!--update user-->
+    <!--<set>-->
+    <!--<if test="username!=null">username=#{username},</if>-->
+    <!--<if test="password!=null">password=#{password},</if>-->
+    <!--</set>-->
+    <!--where id = #{id}-->
+    <!--</update>-->
+
+    <!--<select id="selectById" resultType="com.baizhi.entity.User">-->
+    <!--select id,username,password from user where id=#{id}-->
+    <!--</select>-->
+</mapper>

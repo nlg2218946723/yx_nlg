@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace：dao接口的全类名
+ -->
+<mapper namespace="com.baizhi.mapper.LogMapper">
+    <resultMap id="LogMap" type="com.baizhi.entity.Log">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="times" property="times"/>
+        <result column="opt" property="opt"/>
+        <result column="status" property="status"/>
+    </resultMap>
+    <!--查询全部一级类别-->
+    <!--<select id="selectAll" resultMap="LogMap">-->
+    <!--select * from yx_category where levels = 1 limit #{pageNum},#{pageSize}-->
+    <!--</select>-->
+
+    <!--添加日志信息-->
+    <insert id="insert">
+		insert into yx_log values (#{id},#{name},#{times},#{opt},#{status})
+	</insert>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace：dao接口的全类名
+ -->
+<mapper namespace="com.baizhi.mapper.CategoryPOMapper">
+
+    <resultMap id="CategoryPOMap" type="com.baizhi.po.CategoryPO">
+        <id column="cid" property="id"/>
+        <result column="ccateName" property="cateName"/>
+        <result column="clevels" property="levels"/>
+        <result column="cparentId" property="parentId"/>
+        <collection property="categoryList" ofType="com.baizhi.po.CategoryPO">
+            <id column="sid" property="id"/>
+            <result column="scateName" property="cateName"/>
+            <result column="slevels" property="levels"/>
+            <result column="sparentId" property="parentId"/>
+        </collection>
+    </resultMap>
+
+    <!--查询全部类别一对多-->
+    <select id="queryAllCategory" resultMap="CategoryPOMap">
+		select
+		c.id cid,c.cate_name ccateName,c.levels clevels,c.parent_id cparentId,
+		s.id sid ,s.cate_name scateName,s.levels slevels,s.parent_id sparentId
+		from
+		yx_category c left join yx_category s
+		on c.id = s.parent_id
+		where c.levels = 1
+	</select>
+
+
+</mapper>

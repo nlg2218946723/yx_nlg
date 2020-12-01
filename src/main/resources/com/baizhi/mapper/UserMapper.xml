@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace：dao接口的全类名
+ -->
+<mapper namespace="com.baizhi.mapper.UserMapper">
+
+    <resultMap id="UserResultMap" type="com.baizhi.entity.User">
+        <id column="id" property="id"/>
+        <result column="nick_name" property="nickName"/>
+        <result column="phone" property="phone"/>
+        <result column="pic_img" property="picImg"/>
+        <result column="brief" property="brief"/>
+        <result column="score" property="score"/>
+        <result column="create_date" property="createDate"/>
+        <result column="status" property="status"/>
+        <result column="city" property="city"/>
+    </resultMap>
+
+    <select id="selectAllByPage" resultMap="UserResultMap">
+		select * from yx_user limit #{pageNum},#{pageSize}
+	</select>
+
+    <select id="selectAll" resultMap="UserResultMap">
+		select * from yx_user
+	</select>
+
+
+    <select id="selectMonth" resultType="com.baizhi.entity.MonthAndCount">
+		select concat(month(create_date),'月') months,count(id) counts from yx_user GROUP BY month(create_date)
+
+	</select>
+
+    <select id="selectCity" resultType="com.baizhi.entity.CityAndCount">
+		select city name,count(id) value  from yx_user GROUP BY city
+
+	</select>
+
+    <select id="selectCounts" resultType="int">
+		select count(*)  from yx_user
+	</select>
+
+    <update id="update">
+        update yx_user
+        <set>
+            <if test="nickName!=null">nick_name=#{nickName},</if>
+            <if test="phone!=null">phone=#{phone},</if>
+            <if test="picImg!=null">pic_img=#{picImg},</if>
+            <if test="brief!=null">brief=#{brief},</if>
+            <if test="score!=null">score=#{score},</if>
+            <if test="createDate!=null">create_date=#{createDate},</if>
+            <if test="status!=null">status=#{status},</if>
+            <if test="city!=null">city=#{city},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--<insert id="insert">-->
+    <!--insert into user values (#{id},#{realname},#{username},#{password},#{sex})-->
+    <!--</insert>-->
+
+    <!--<delete id="delete">-->
+    <!--delete from user where id = #{id}-->
+    <!--</delete>-->
+
+
+    <!--<select id="selectById" resultType="com.baizhi.entity.User">-->
+    <!--select id,username,password from user where id=#{id}-->
+    <!--</select>-->
+</mapper>

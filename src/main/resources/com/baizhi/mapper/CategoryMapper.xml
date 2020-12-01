@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace：dao接口的全类名
+ -->
+<mapper namespace="com.baizhi.mapper.CategoryMapper">
+    <resultMap id="CategoryMap" type="com.baizhi.entity.Category">
+        <id column="id" property="id"/>
+        <result column="cate_name" property="cateName"/>
+        <result column="levels" property="levels"/>
+        <result column="parent_id" property="parentId"/>
+
+    </resultMap>
+
+    <!--查询全部一级类别-->
+    <select id="selectAllLevelsOne" resultMap="CategoryMap">
+		select * from yx_category where levels = 1 limit #{pageNum},#{pageSize}
+	</select>
+    <!--查询一级类别总条数-->
+    <select id="selectLevelsOneCounts" resultType="Integer">
+		select count(id)  from yx_category where levels = 1
+	</select>
+    <!--添加一级类别-->
+    <insert id="insertOne">
+		insert into yx_category values (#{id},#{cateName},#{levels},#{parentId,jdbcType=VARCHAR})
+	</insert>
+    <!--修改一级类别-->
+    <update id="updateOne">
+        update yx_category
+        <set>
+            <if test="cateName!=null">cate_name=#{cateName},</if>
+            <if test="levels!=null">levels=#{levels},</if>
+            <if test="parentId!=null">parent_id=#{parentId},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!--删除一级类别-->
+    <delete id="deleteOne">
+		delete from yx_category where id = #{id}
+	</delete>
+
+    <!--查询某一级类别下是否有二级类别-->
+    <select id="selectOne" resultMap="CategoryMap">
+		select * from yx_category where parent_id = #{id}
+	</select>
+    <!--查询二级类别-->
+    <select id="selectToTwo" resultMap="CategoryMap">
+		select * from yx_category where parent_id = #{parentId} limit #{pageNum},#{pageSize}
+	</select>
+
+    <!--查询所有二级类别-->
+    <select id="selectAllTwo" resultMap="CategoryMap">
+		select * from yx_category where levels = 2
+	</select>
+
+    <!--查询指定二级类别总条数-->
+    <select id="selectToTwoCounts" resultType="Integer">
+		select count(id)  from yx_category where parent_id = #{id}
+	</select>
+
+
+    <!--<select id="selectById" resultType="com.baizhi.entity.User">-->
+    <!--select id,username,password from user where id=#{id}-->
+    <!--</select>-->
+</mapper>

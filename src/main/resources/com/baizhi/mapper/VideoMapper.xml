@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 
+	namespace：dao接口的全类名
+ -->
+<mapper namespace="com.baizhi.mapper.VideoMapper">
+    <resultMap id="VideoMap" type="com.baizhi.entity.Video">
+        <id column="vid" property="id"/>
+        <result column="vtitle" property="title"/>
+        <result column="vbrief" property="brief"/>
+        <result column="vcover_path" property="coverPath"/>
+        <result column="vvideo_path" property="videoPath"/>
+        <result column="vupload_time" property="uploadTime"/>
+        <result column="vlike_count" property="likeCount"/>
+        <result column="vplay_count" property="playCount"/>
+        <association property="category" javaType="com.baizhi.entity.Category">
+            <id column="cid" property="id"/>
+            <result column="ccate_name" property="cateName"/>
+            <result column="clevels" property="levels"/>
+            <result column="cparent_id" property="parentId"/>
+        </association>
+        <association property="user" javaType="com.baizhi.entity.User">
+            <id column="uid" property="id"/>
+            <result column="unick_name" property="nickName"/>
+            <result column="uphone" property="phone"/>
+            <result column="upic_img" property="picImg"/>
+            <result column="ubrief" property="brief"/>
+            <result column="uscore" property="score"/>
+            <result column="ucreate_date" property="createDate"/>
+            <result column="ustatus" property="status"/>
+        </association>
+        <association property="group" javaType="com.baizhi.entity.Group">
+            <id column="gid" property="id"/>
+            <result column="ggroup_name" property="groupName"/>
+            <result column="gcreate_date" property="createDate"/>
+            <result column="guser_id" property="userId"/>
+            <!--<association property="user" javaType="com.baizhi.entity.User">-->
+            <!--<id column="id" property="id"/>-->
+            <!--<result column="nickName" property="nick_name"/>-->
+            <!--<result column="phone" property="phone"/>-->
+            <!--<result column="picImg" property="pic_img"/>-->
+            <!--<result column="brief" property="brief"/>-->
+            <!--<result column="score" property="score"/>-->
+            <!--<result column="createDate" property="create_date"/>-->
+            <!--<result column="status" property="status"/>-->
+            <!--</association>-->
+        </association>
+    </resultMap>
+
+    <select id="queryByLikeVideoName" resultType="com.baizhi.po.VideoPO2">
+		select
+		c.cate_name cateName,c.id categoryId,
+		v.id,v.title videoTitle,v.cover_path cover,v.video_path path,v.upload_time uploadTime,
+		v.brief description,
+		u.id userId,u.nick_name userName
+		 from yx_category c
+		right join yx_video v on c.id = v.category_id
+		left join yx_user u on v.user_id = u.id
+		where v.title like #{content}
+		order by v.upload_time desc
+	</select>
+
+
+    <select id="queryByReleaseTime" resultType="com.baizhi.po.VideoPO">
+		select
+		c.cate_name cateName,
+		v.id,v.title videoTitle,v.cover_path cover,v.video_path path,v.upload_time uploadTime,
+		v.brief description,
+		u.pic_img userPhoto
+		 from yx_category c
+		right join yx_video v on c.id = v.category_id
+		left join yx_user u on v.user_id = u.id
+		order by v.upload_time desc
+	</select>
+
+
+    <!--查询全部一级类别-->
+    <select id="selectAllByPage" resultMap="VideoMap">
+		select
+		v.id vid,v.title vtitle,v.brief vbrief,v.cover_path vcover_path,v.video_path vvideo_path,v.upload_time vupload_time,v.like_count vlike_count,v.play_count vplay_count,
+		c.id cid,c.cate_name ccate_name,c.levels clevels,c.parent_id cparent_id,
+		u.id uid,u.nick_name unick_name,u.phone uphone,u.pic_img upic_img,u.brief ubrief,u.score uscore,u.create_date ucreate_date,u.status ustatus,
+		g.id gid,g.group_name ggroup_name,g.create_date gcreate_date,g.user_id guser_id
+
+		from yx_video v
+		left join yx_category c
+		on v.category_id = c.id
+		left join yx_user u
+		on v.user_id = u.id
+		left join yx_group g
+		on v.group_id = g.id
+		limit #{pageNum},#{pageSize}
+	</select>
+
+    <select id="selectById" resultMap="VideoMap">
+		select
+		v.id vid,v.title vtitle,v.brief vbrief,v.cover_path vcover_path,v.video_path vvideo_path,v.upload_time vupload_time,v.like_count vlike_count,v.play_count vplay_count,
+		c.id cid,c.cate_name ccate_name,c.levels clevels,c.parent_id cparent_id,
+		u.id uid,u.nick_name unick_name,u.phone uphone,u.pic_img upic_img,u.brief ubrief,u.score uscore,u.create_date ucreate_date,u.status ustatus,
+		g.id gid,g.group_name ggroup_name,g.create_date gcreate_date,g.user_id guser_id
+
+		from yx_video v
+		left join yx_category c
+		on v.category_id = c.id
+		left join yx_user u
+		on v.user_id = u.id
+		left join yx_group g
+		on v.group_id = g.id
+		where v.id = #{id}
+	</select>
+    <!--查询视频总条数-->
+    <select id="selectCounts" resultType="Integer">
+		select count(id)  from yx_video
+	</select>
+    <!--添加视频-->
+    <insert id="insert">
+		insert into yx_video values (#{id},#{title},#{brief},#{coverPath},#{videoPath}
+		,#{uploadTime},#{likeCount},#{playCount},#{category.id,jdbcType=VARCHAR},#{user.id,jdbcType=VARCHAR},#{group.id,jdbcType=VARCHAR})
+	</insert>
+    <!--修改一级类别-->
+    <update id="update">
+        update yx_video
+        <set>
+            <if test="title!=null">title=#{title},</if>
+            <if test="brief!=null">brief=#{brief},</if>
+            <if test="coverPath!=null">cover_path=#{coverPath},</if>
+            <if test="videoPath!=null">video_path=#{videoPath},</if>
+            <if test="uploadTime!=null">upload_time=#{uploadTime},</if>
+            <if test="likeCount!=null">like_count=#{likeCount},</if>
+            <if test="playCount!=null">play_count=#{playCount},</if>
+        </set>
+        where id = #{id}
+    </update>
+    <!--删除一级类别-->
+    <delete id="delete">
+		delete from yx_video where id = #{id}
+	</delete>
+
+    <!--&lt;!&ndash;查询某一级类别下是否有二级类别&ndash;&gt;-->
+    <!--<select id="selectOne" resultMap="CategoryMap">-->
+    <!--select * from yx_category where parent_id = #{id}-->
+    <!--</select>-->
+    <!--&lt;!&ndash;查询二级类别&ndash;&gt;-->
+    <!--<select id="selectToTwo" resultMap="CategoryMap">-->
+    <!--select * from yx_category where parent_id = #{parentId} limit #{pageNum},#{pageSize}-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;查询指定二级类别总条数&ndash;&gt;-->
+    <!--<select id="selectToTwoCounts" resultType="Integer">-->
+    <!--select count(id)  from yx_category where parent_id = #{id}-->
+    <!--</select>-->
+
+
+    <!--<select id="selectById" resultType="com.baizhi.entity.User">-->
+    <!--select id,username,password from user where id=#{id}-->
+    <!--</select>-->
+</mapper>
